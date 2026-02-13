@@ -1,0 +1,33 @@
+name: Get Notes Sync To Notion
+
+on:
+  schedule:
+    # UTC 01:00 = Beijing time 09:00
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run sync
+        env:
+          GET_API_URL: ${{ secrets.GET_API_URL }}
+          GET_API_KEY: ${{ secrets.GET_API_KEY }}
+          GET_AUTH_HEADER: ${{ secrets.GET_AUTH_HEADER }}
+          GET_AUTH_SCHEME: ${{ secrets.GET_AUTH_SCHEME }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: npm run sync

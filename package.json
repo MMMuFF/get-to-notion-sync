@@ -1,0 +1,13 @@
+{
+  "name": "get-to-notion-sync",
+  "version": "1.0.0",
+  "description": "Sync notes from Get to Notion via GitHub Actions",
+  "main": "sync.js",
+  "scripts": {
+    "sync": "node sync.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.16",
+    "axios": "^1.12.2"
+  }
+}
