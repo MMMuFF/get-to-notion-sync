@@ -2,8 +2,8 @@ name: Get Notes Sync To Notion
 
 on:
   schedule:
-    # UTC 01:00 = Beijing time 09:00
-    - cron: "0 1 * * *"
+    # Every hour (UTC)
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -24,10 +24,12 @@ jobs:
 
       - name: Run sync
         env:
-          GET_API_URL: ${{ secrets.GET_API_URL }}
           GET_API_KEY: ${{ secrets.GET_API_KEY }}
-          GET_AUTH_HEADER: ${{ secrets.GET_AUTH_HEADER }}
-          GET_AUTH_SCHEME: ${{ secrets.GET_AUTH_SCHEME }}
+          GET_API_BASE: ${{ secrets.GET_API_BASE }}
+          GET_TOPIC_ID: ${{ secrets.GET_TOPIC_ID }}
+          GET_TOPIC_IDS: ${{ secrets.GET_TOPIC_IDS }}
+          GET_SYNC_QUERY: ${{ secrets.GET_SYNC_QUERY }}
+          GET_TOP_K: ${{ secrets.GET_TOP_K }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
         run: npm run sync

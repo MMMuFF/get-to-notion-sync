@@ -1,66 +1,59 @@
 # Get 笔记自动同步到 Notion
 
-这个仓库提供一个最小可用方案：
+这个项目会定时调用 Get 知识库 OpenAPI，把召回结果同步到 Notion 数据库：
 
-- 使用 `sync.js` 从 Get API 拉取笔记
-- 按 `SourceId` 在 Notion 数据库中“存在则更新，不存在则创建”
-- 用 GitHub Actions 定时执行，无需自建服务器
+- 有同一个 `SourceId`：更新该条记录
+- 没有 `SourceId`：创建新记录
+- 如果你在 Notion 里加了 `ContentHash` 字段：内容没变会自动跳过更新
 
-## 1. 本地初始化
+## 1. Notion 数据库字段（先建好）
 
-```bash
-npm install
-```
-
-## 2. 配置 Notion 数据库字段
-
-在你的 Notion Database 中创建以下属性（名称需一致）：
+必填字段（名字必须一致）：
 
 - `Name`（Title）
-- `Content`（Rich text）
 - `SourceId`（Rich text）
+
+建议字段：
+
+- `Content`（Rich text）
 - `UpdatedAt`（Date）
+- `ContentHash`（Rich text）
+- `SourceType`（Rich text）
+- `Score`（Number）
 
-并把该数据库共享给你的 Notion Integration。
+并把这个数据库共享给你的 Notion Integration。
 
-## 3. 必填环境变量 / GitHub Secrets
+## 2. GitHub Secrets（仓库设置里配置）
 
-至少配置：
+必填：
 
-- `GET_API_URL`：Get 笔记接口地址（返回单条对象或数组都可以）
-- `GET_API_KEY`：Get API Key
+- `GET_API_KEY`：Get OpenAPI key
+- `GET_TOPIC_ID`：Get 里的 topic_id（API 配置页参数 2）
 - `NOTION_TOKEN`：Notion Integration Token
 - `NOTION_DATABASE_ID`：Notion 数据库 ID
 
 可选：
 
-- `GET_AUTH_HEADER`：鉴权请求头名称，默认 `Authorization`
-- `GET_AUTH_SCHEME`：鉴权前缀，默认 `Bearer`。如果你的接口不需要前缀，可设为空字符串。
+- `GET_API_BASE`：默认 `https://open-api.biji.com/getnote/openapi`
+- `GET_TOPIC_IDS`：多个 topic，逗号分隔（和 `GET_TOPIC_ID` 二选一）
+- `GET_SYNC_QUERY`：召回问题，默认 `请返回最近更新的笔记`
+- `GET_TOP_K`：每次召回条数，默认 `20`
 
-## 4. GitHub Actions
+## 3. 运行方式
 
 工作流文件：`.github/workflows/sync.yml`
 
 - 手动触发：Actions -> `Get Notes Sync To Notion` -> Run workflow
-- 定时触发：默认每天北京时间 09:00（UTC 01:00）
+- 自动触发：默认每小时一次（UTC，每小时第 0 分）
 
-如需调整时间，修改 cron 表达式即可。
-
-## 5. 本地测试
-
-先在本地导出环境变量，然后运行：
+## 4. 本地测试（可选）
 
 ```bash
+npm install
 npm run sync
 ```
 
-## 6. 数据映射说明
+## 5. 说明
 
-脚本会尽量兼容常见字段名：
-
-- `id/noteId/uuid` -> `SourceId`
-- `title/name` -> `Name`
-- `content/body/text` -> `Content`
-- `updatedAt/updated_at/modifiedAt` -> `UpdatedAt`
-
-如果你的 Get API 字段不同，改 `sync.js` 中的映射函数即可。
+当前使用的是 Get 的“召回”接口，它是按 query + topic 返回 top_k 结果，不是官方“全量导出所有笔记”接口。  
+如果你想尽量覆盖更多更新，建议把 `GET_SYNC_QUERY` 设得更宽泛，并提高 `GET_TOP_K`。
