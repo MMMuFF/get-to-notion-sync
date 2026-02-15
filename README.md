@@ -44,7 +44,7 @@
 工作流文件：`.github/workflows/sync.yml`
 
 - 手动触发：Actions -> `Get Notes Sync To Notion` -> Run workflow
-- 自动触发：默认每小时一次（UTC，每小时第 0 分）
+- 自动触发：默认每 5 分钟一次（UTC）
 
 ## 4. 本地测试（可选）
 
@@ -57,3 +57,4 @@ npm run sync
 
 当前使用的是 Get 的“召回”接口，它是按 query + topic 返回 top_k 结果，不是官方“全量导出所有笔记”接口。  
 如果你想尽量覆盖更多更新，建议把 `GET_SYNC_QUERY` 设得更宽泛，并提高 `GET_TOP_K`。
+因此这是“近实时自动同步”（通常 5 分钟内），不是 webhook 级别的秒级实时推送。
