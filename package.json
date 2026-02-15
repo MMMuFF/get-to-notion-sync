@@ -1,13 +1,18 @@
 {
   "name": "get-to-notion-sync",
   "version": "1.0.0",
-  "description": "Sync notes from Get to Notion via GitHub Actions",
-  "main": "sync.js",
+  "description": "Local auto sync notes from Get to Notion",
+  "main": "local-sync.js",
   "scripts": {
-    "sync": "node sync.js"
+    "sync": "node sync.js",
+    "local:once": "node local-sync.js",
+    "local:watch": "node local-sync.js --watch",
+    "browser:install": "playwright install chromium"
   },
   "dependencies": {
     "@notionhq/client": "^2.2.16",
-    "axios": "^1.12.2"
+    "axios": "^1.12.2",
+    "dotenv": "^17.2.3",
+    "playwright": "^1.54.2"
   }
 }

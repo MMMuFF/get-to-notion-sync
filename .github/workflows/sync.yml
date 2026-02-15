@@ -1,9 +1,6 @@
 name: Get Notes Sync To Notion
 
 on:
-  schedule:
-    # Every 5 minutes (UTC)
-    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:
